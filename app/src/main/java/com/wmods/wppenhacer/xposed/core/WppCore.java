@@ -501,8 +501,16 @@ public class WppCore {
     public static File getContactPhotoFile(String jid) {
         String datafolder = Utils.getApplication().getCacheDir().getParent() + "/";
         File file = new File(datafolder + "/cache/" + "Profile Pictures" + "/" + stripJID(jid) + ".jpg");
-        if (!file.exists())
+        if (!file.exists()) {
+            Utils.showToast(
+                "Not found:\n" +
+                file1.getAbsolutePath() + "\n" +
+                file2.getAbsolutePath(),
+                Toast.LENGTH_LONG
+            );
+        
             file = new File(datafolder + "files" + "/" + "Avatars" + "/" + jid + ".j");
+        }
         if (file.exists()) return file;
         return null;
     }
