@@ -504,7 +504,7 @@ public class WppCore {
         if (!file.exists()) {
             Utils.showToast(
                 "Not found:\n" +
-                file1.getAbsolutePath(),
+                file.getAbsolutePath(),
                 Toast.LENGTH_LONG
             );
         
