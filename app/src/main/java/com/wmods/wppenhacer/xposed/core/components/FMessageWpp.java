@@ -310,33 +310,48 @@ public class FMessageWpp {
 
         public UserJid(@Nullable String rawjid) {
             if (isInvalidJid(rawjid)) return;
+  
             if (checkValidLID(rawjid)) {
-                this.userJid = WppCore.createUserJid(rawjid);
-                this.phoneJid = WppCore.getPhoneJidFromUserJid(this.userJid);
+                Object lid = WppCore.createUserJid(rawjid);
+                Object derivedPhone = WppCore.getPhoneJidFromUserJid(lid);
+  
+                if (derivedPhone != null) {
+                    this.phoneJid = derivedPhone;
+                    this.userJid = WppCore.getUserJidFromPhoneJid(derivedPhone);
+                }
             } else {
-                this.phoneJid = WppCore.createUserJid(rawjid);
-                this.userJid = WppCore.getUserJidFromPhoneJid(this.phoneJid);
+               this.phoneJid = WppCore.createUserJid(rawjid);
+               this.userJid = WppCore.getUserJidFromPhoneJid(this.phoneJid);
             }
         }
 
 
         public UserJid(@Nullable Object lidOrJid) {
             if (lidOrJid == null) return;
+
             String raw;
             try {
                 raw = (String) XposedHelpers.callMethod(lidOrJid, "getRawString");
             } catch (Exception ignored) {
                 return;
             }
+
             if (isInvalidJid(raw)) return;
+
             if (checkValidLID(raw)) {
-                this.userJid = lidOrJid;
-                this.phoneJid = WppCore.getPhoneJidFromUserJid(this.userJid);
+                Object derivedPhone = WppCore.getPhoneJidFromUserJid(lidOrJid);
+
+                if (derivedPhone != null) {
+                    this.phoneJid = derivedPhone;
+                    this.userJid = WppCore.getUserJidFromPhoneJid(derivedPhone);
+                }
             } else {
                 this.phoneJid = lidOrJid;
                 this.userJid = WppCore.getUserJidFromPhoneJid(this.phoneJid);
             }
         }
+
+        
 
         public UserJid(@Nullable Object userJid, Object phoneJid) {
             this.userJid = userJid;
