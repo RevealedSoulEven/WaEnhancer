@@ -499,20 +499,30 @@ public class WppCore {
     }
 
     public static File getContactPhotoFile(String jid) {
-        String datafolder = Utils.getApplication().getCacheDir().getParent() + "/";
-        File file = new File(datafolder + "/cache/" + "Profile Pictures" + "/" + stripJID(jid) + ".jpg");
-        if (!file.exists()) {
-            Utils.showToast(
-                "Not found:\n" +
-                file.getAbsolutePath(),
-                Toast.LENGTH_LONG
-            );
-        
-            file = new File(datafolder + "files" + "/" + "Avatars" + "/" + jid + ".j");
+        if (jid == null) return null;
+
+        if (jid.contains("@lid")) {
+            Object phone = getPhoneJidFromUserJid(createUserJid(jid));
+            if (phone != null) {
+                jid = (String) XposedHelpers.callMethod(phone, "getRawString");
+            }
         }
-        if (file.exists()) return file;
-        return null;
+
+        String datafolder = Utils.getApplication().getCacheDir().getParent() + "/";
+
+        File file = new File(
+            datafolder + "/cache/Profile Pictures/" + stripJID(jid) + ".jpg"
+        );
+
+        if (!file.exists()) {
+            file = new File(
+                datafolder + "files/Avatars/" + jid + ".j"
+            );
+        }
+
+        return file.exists() ? file : null;
     }
+
 
     public static String getMyName() {
         var startup_prefs = Utils.getApplication().getSharedPreferences("startup_prefs", Context.MODE_PRIVATE);
